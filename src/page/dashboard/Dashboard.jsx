@@ -34,7 +34,7 @@ export default function Dashboard() {
   return (
     <DashboardContainer vAlign="center" fill space="between">
       <Flex column>
-        <h1>Welcome to the Home Page madame {data?.user?.name}</h1>
+        <h1>Welcome to the Home Page {data?.user?.name}</h1>
         <Button primary onClick={ProfileRedirection} content={"Profile"} />
       </Flex>
       <Logout />
