@@ -1,6 +1,8 @@
 import React from "react";
-import { _api_logout } from "../../auth/api/Logout";
 
+import { _api_logout } from "../../auth/api/Logout";
+// const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3000" ;
+const apiUrl = import.meta.env.VITE_API_URL;
 export const authFetch = async (url, options = {}) => {
   let storage = JSON.parse(localStorage.getItem("login"));
   let accessToken = storage?.accessToken;
@@ -16,10 +18,14 @@ export const authFetch = async (url, options = {}) => {
   if (res.status === 401) {
     try {
       // Access token expiré → on tente refresh
-      const refreshRes = await fetch("http://localhost:3000/api/auth/refresh", {
+      const refreshRes = await fetch(`${apiUrl}/api/auth/refresh`, {
         method: "POST",
         credentials: "include",
       });
+      // const refreshRes = await fetch("http://localhost:3000/api/auth/refresh", {
+      //   method: "POST",
+      //   credentials: "include",
+      // });
       const refreshData = await refreshRes.json();
       console.log("Nouveau token obtenu:", refreshData);
 
@@ -58,7 +64,8 @@ export const authFetch = async (url, options = {}) => {
 };
 
 export const fetchUserData = async () => {
-  const res = await authFetch("http://localhost:3000/api/auth/dashboard");
+  // const res = await authFetch("http://localhost:3000/api/auth/dashboard");
+  const res = await authFetch(`${apiUrl}/api/auth/dashboard`);
   if (res && res.ok) {
     const users = await res.json();
     console.log(users);
