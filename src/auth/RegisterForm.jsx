@@ -33,12 +33,10 @@ const RegisterForm = ({ setSwitchUi }) => {
       setSwitchUi("login");
     },
     onError: (err) => {
-      console.log(err);
       SetAlertMessage(err.message);
       SetDisplayAlert(true);
     },
   });
-
   const {
     register,
     handleSubmit,

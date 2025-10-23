@@ -16,7 +16,7 @@ export const _api_Register = async (data) => {
     const errorData = await response.json();
     // Et on lance une erreur pour la propager à `useMutation` (dans onError)
     console.log(errorData);
-    throw new Error(errorData.status, "Failed");
+    throw new Error(errorData.error, "Failed");
   }
 
   // 3. ATTENDRE la conversion du corps en JSON et le retourner.
