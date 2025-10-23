@@ -101,7 +101,7 @@ export const IconPosition = styled(Flex)`
   right: 80px;
   z-index: 50;
   margin-left: 12px;
-  background-color: white;
+  background-color: transparent;
   padding: 8px;
 `;
 

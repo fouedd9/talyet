@@ -48,7 +48,7 @@ const LoginForm = ({ setSwitchUi }) => {
     message: "",
   });
   const navigate = useNavigate();
-  const { mutate, isSuccess, isPending } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data) => Auth(data),
   });
 
@@ -81,7 +81,6 @@ const LoginForm = ({ setSwitchUi }) => {
       },
     });
   };
-  console.log({ isPending, isSuccess });
   return (
     <Flex hAlign="center" fill={true} column>
       <Flex gap="gap.smaller" hAlign="center" column>
