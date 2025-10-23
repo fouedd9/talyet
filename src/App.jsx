@@ -12,7 +12,7 @@ import Authentification from "./page/authentification/Authentification";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MyProfile } from "./page/profile/MyProfile";
 import ProtectedRoute from "./auth/ProtectedRoute";
-
+import { Analytics } from "@vercel/analytics/next";
 import styled from "styled-components";
 import SideBar from "./sidebar/SideBar";
 import { EmployeeManagement } from "./page/employee_management/EmployeeManagement";
@@ -82,6 +82,8 @@ function App() {
             <Route path="/login" element={<Authentification />} />
           </Routes>
         </Router>
+        {/* ✅ Place the Analytics component at the bottom */}
+        <Analytics />
       </Provider>
     </QueryClientProvider>
   );
