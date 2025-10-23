@@ -1,6 +1,7 @@
 export const Auth = async (data) => {
-  const { email, password } = data;
+  const { password } = data;
   //   console.log({ email, password });
+  const email = data.email.toLowerCase();
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const res = await fetch(`${apiUrl}/api/auth/login`, {
