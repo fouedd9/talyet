@@ -12,7 +12,7 @@ import Authentification from "./page/authentification/Authentification";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MyProfile } from "./page/profile/MyProfile";
 import ProtectedRoute from "./auth/ProtectedRoute";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 import styled from "styled-components";
 import SideBar from "./sidebar/SideBar";
 import { EmployeeManagement } from "./page/employee_management/EmployeeManagement";
