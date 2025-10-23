@@ -3,6 +3,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
   Flex,
+  Loader,
   Text,
   // Input,
 } from "@fluentui/react-northstar";
@@ -47,7 +48,7 @@ const LoginForm = ({ setSwitchUi }) => {
     message: "",
   });
   const navigate = useNavigate();
-  const { isLoading, mutate } = useMutation({
+  const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: (data) => Auth(data),
   });
 
@@ -62,7 +63,7 @@ const LoginForm = ({ setSwitchUi }) => {
 
       return;
     }
-    mutate(data, {
+    return mutate(data, {
       onSuccess: (res) => {
         setStatus({ type: "success", message: res.message });
         // SetDisplayAlert(true);
@@ -80,7 +81,7 @@ const LoginForm = ({ setSwitchUi }) => {
       },
     });
   };
-
+  console.log({ isPending, isSuccess });
   return (
     <Flex hAlign="center" fill={true} column>
       <Flex gap="gap.smaller" hAlign="center" column>
@@ -137,12 +138,21 @@ const LoginForm = ({ setSwitchUi }) => {
         </Content>
         <Flex styles={{ paddingInline: "24px" }} fill>
           <LoginButton
-            fluid
-            loading={isLoading}
+            content={"Login"}
             isValid={isValid}
-            onClick={() => handleSubmit(onSubmit)}
+            fluid
+            onClick={() => {
+              return handleSubmit(onSubmit);
+            }}
+            disabled={isPending || !isValid}
+            loading={!isPending}
+            loadingPosition="start"
+            primary
           >
-            Login
+            <span>Login</span>
+            <div style={{ position: "absolute", right: "10px" }}>
+              {isPending && <Loader size="smallest" />}
+            </div>
           </LoginButton>
         </Flex>
       </form>
