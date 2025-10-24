@@ -1,4 +1,10 @@
-import { EyeIcon, EyeSlashIcon, Flex, Text } from "@fluentui/react-northstar";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  Flex,
+  Loader,
+  Text,
+} from "@fluentui/react-northstar";
 import React, { useState } from "react";
 import {
   Content,
@@ -11,9 +17,9 @@ import {
   SecondaryText,
   IconPosition,
   ConfirmPasswordBlock,
-  LoginButton,
   SignUpButton,
   SwitchText,
+  LoginButton,
 } from "./commun/css";
 import { useForm } from "react-hook-form";
 import Alert from "../components/Alert";
@@ -25,7 +31,7 @@ const RegisterForm = ({ setSwitchUi }) => {
   const [displayAlert, SetDisplayAlert] = useState(false);
   const [alertMessage, SetAlertMessage] = useState("");
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data) => _api_Register(data),
     onSuccess: () => {
       SetDisplayAlert(true);
@@ -165,11 +171,19 @@ const RegisterForm = ({ setSwitchUi }) => {
               </ConfirmPasswordBlock>
               <Flex fill>
                 <LoginButton
-                  fluid
                   isValid={isValid}
-                  onClick={() => handleSubmit(onSubmit)}
+                  fluid
+                  onClick={() => {
+                    return handleSubmit(onSubmit);
+                  }}
+                  disabled={isPending || !isValid}
+                  loadingPosition="start"
+                  primary
                 >
-                  Create account
+                  <span>Create account</span>
+                  <div style={{ position: "absolute", right: "10px" }}>
+                    {isPending && <Loader size="smallest" />}
+                  </div>
                 </LoginButton>
               </Flex>
             </Flex>

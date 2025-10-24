@@ -137,14 +137,12 @@ const LoginForm = ({ setSwitchUi }) => {
         </Content>
         <Flex styles={{ paddingInline: "24px" }} fill>
           <LoginButton
-            content={"Login"}
             isValid={isValid}
             fluid
             onClick={() => {
               return handleSubmit(onSubmit);
             }}
             disabled={isPending || !isValid}
-            loading={!isPending}
             loadingPosition="start"
             primary
           >
