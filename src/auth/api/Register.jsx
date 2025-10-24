@@ -2,7 +2,6 @@ export const _api_Register = async (data) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   // 1. ATTENDRE la réponse de l'appel fetch
   const response = await fetch(`${apiUrl}/api/auth/register`, {
-    // ^^^ Correction : 'registessr' remplacé par 'register'
     method: "POST",
     headers: {
       "Content-Type": "application/json",
