@@ -5,11 +5,15 @@ import Logout from "../../auth/Logout";
 import { Button, Flex } from "@fluentui/react-northstar";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
 export default function Dashboard() {
   const state = JSON.parse(localStorage.getItem("login"));
+  const { user } = useAuthStore();
+
+  console.log({ user1992: user.id });
   const navigate = useNavigate();
   const { isLoading, data, isFetching, error } = useQuery({
-    queryKey: ["fetchUserData", state?.user?.id],
+    queryKey: ["fetchUserData", user.id],
     queryFn: () => {
       return fetchUserData(state);
     },

@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@fluentui/react-northstar";
+import { Avatar, Button, Dialog, Flex, Text } from "@fluentui/react-northstar";
 import styled from "styled-components";
 import Logout from "../../auth/Logout";
 import {
@@ -12,7 +12,38 @@ import {
   PersonHeart32Color,
   SlideTextSparkle32Color,
 } from "@fluentui/react-icons";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProfileData } from "./api";
+import { _getRole } from "./components/Badge.jsx";
+
 export const MyProfile = () => {
+  const { user } = useAuthStore();
+  const { data } = useQuery({
+    queryKey: ["profile_data", user.id],
+    queryFn: () => getMyProfileData(user.id),
+  });
+  // const userConnected = data.userConnected;
+  const {
+    role,
+    id,
+    country,
+    city,
+    address,
+    phone,
+    email,
+    name,
+    job_title,
+    profile_picture,
+    bio,
+    age,
+  } = data?.userConnected || {};
+  const NotFound = (
+    <Text
+      styles={{ color: "rgba(231, 24, 62, 0.52)" }}
+      content="Non renseigné"
+    />
+  );
   return (
     <Profile fill>
       <ProfileContainer column>
@@ -22,22 +53,30 @@ export const MyProfile = () => {
             <DescriptionText content="Gérez vos informations personnelles" />
           </Flex>
           <Flex gap="gap.large">
-            <Button content={"Modifier mon profil"} />
+            <Dialog
+              header={"ejejhe"}
+              trigger={<Button content={"Modifier mon profil"} />}
+            />
+
             <Logout />
           </Flex>
         </DashboardHeaderCard>
         <DashboardContent column>
-          <Flex gap="gap.medium">
-            <Image src="https://fabricweb.azureedge.net/fabric-website/assets/images/avatar/TimDeboer.jpg" />
-            <Flex gap="gap.smaller" column>
-              <UserName content="Sarrah Johnson" />
-              <JobTitle content="Senior Product Designer" />
+          <Flex space="between" fill>
+            <Flex gap="gap.medium">
+              {/* <Image src="https://fabricweb.azureedge.net/fabric-website/assets/images/avatar/TimDeboer.jpg" /> */}
+              <Image size="largest" name={name} image={profile_picture} />
+              <Flex gap="gap.smaller" column>
+                <UserName content={name} />
+                <JobTitle content={job_title ?? NotFound} />
+              </Flex>
             </Flex>
+            <Text content={_getRole(role)} />
           </Flex>
           <Divider />
           <Flex gap="gap.small" column>
-            <BioTitle content="A propos" />
-            <BioDescription content="Passionate product designer with 5+ years of experience creating user-centered digital experiences. I love turning complex problems into simple, beautiful solutions." />
+            <BioTitle content={"A propos"} />
+            <BioDescription content={bio ?? NotFound} />
           </Flex>
         </DashboardContent>
         {/* contact section */}
@@ -53,7 +92,7 @@ export const MyProfile = () => {
                 <Mail32Color />
                 <Flex column>
                   <EmailLabel content="Email" />
-                  <EmailText content="sarah.johnson@example.com" />
+                  <EmailText content={email ?? NotFound} />
                 </Flex>
               </Flex>
               <Flex vAlign="center" gap="gap.large">
@@ -61,7 +100,7 @@ export const MyProfile = () => {
 
                 <Flex column>
                   <EmailLabel content="Téléphon" />
-                  <EmailText content="+1 (555) 123-4567" />
+                  <EmailText content={phone ?? NotFound} />
                 </Flex>
               </Flex>
             </Flex>
@@ -78,15 +117,15 @@ export const MyProfile = () => {
                 <PeopleHome32Color />
                 <Flex column>
                   <EmailLabel content="Adresse" />
-                  <EmailText content="123 Main Street, Apt 4B" />
+                  <EmailText content={address ?? NotFound} />
                 </Flex>
               </Flex>
               <Flex vAlign="center" gap="gap.large">
                 <Agents32Color />
 
                 <Flex column>
-                  <EmailLabel content="Ville" />
-                  <EmailText content="New York, United States" />
+                  <EmailLabel content="Pays" />
+                  <EmailText content={NotFound ?? `${city}, ${country}`} />
                 </Flex>
               </Flex>
             </Flex>
@@ -103,7 +142,7 @@ export const MyProfile = () => {
                 <PersonHeart32Color />
                 <Flex column>
                   <EmailLabel content="Age" />
-                  <EmailText content="28 ans" />
+                  <EmailText content={age ?? NotFound} />
                 </Flex>
               </Flex>
               <Flex vAlign="center" gap="gap.large">
@@ -111,7 +150,7 @@ export const MyProfile = () => {
 
                 <Flex column>
                   <EmailLabel content="#Id" />
-                  <EmailText content="#1" />
+                  <EmailText content={id} />
                 </Flex>
               </Flex>
             </Flex>
@@ -168,7 +207,7 @@ const DashboardContent = styled(Flex)`
   border: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
-const Image = styled.img`
+const Image = styled(Avatar)`
   border-radius: 50%;
   width: 100px;
   height: 100px;
@@ -228,7 +267,8 @@ const ContactCard = styled(Flex)`
   border-radius: 20px;
   padding: 40px;
   backdrop-filter: blur(10px);
-  /* width: 1020px; */
+  max-width: 1020px;
+  width: 380px;
   margin-bottom: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
