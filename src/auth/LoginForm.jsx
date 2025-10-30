@@ -78,6 +78,7 @@ const LoginForm = ({ setSwitchUi }) => {
         SetDisplayAlert(true);
 
         console.log("Login erro:", error);
+        return;
       },
     });
   };

@@ -1,3 +1,5 @@
+import { useAuthStore } from "../../store/useAuthStore";
+
 export const Auth = async (data) => {
   const { password } = data;
   //   console.log({ email, password });
@@ -11,7 +13,10 @@ export const Auth = async (data) => {
     credentials: "include", // 🔑 pour accepter les cookies
   });
   const result = await res.json();
-  console.log({ result });
+
+  if (result.success) {
+    await useAuthStore.getState().setUser(result?.user); // ✅ met à jour le store et localStorage
+  }
   if (!result.success) {
     throw result; // va déclencher onError dans React Query
   }
