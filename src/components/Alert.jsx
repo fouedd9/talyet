@@ -14,50 +14,41 @@ export default function Alert({
       SetDisplayAlert(false);
     }, 3000);
   return (
-    <AlertContent type={status}>
+    <AlertContent status={status}>
       <TextAlert>{content}</TextAlert>
-      <CloseIcon
-        styles={{ color: "rgba(176, 81, 97, 0.9)", cursor: "pointer" }}
-        onClick={() => SetDisplayAlert(false)}
-      />
+      <CloseIconStyle status={status} onClick={() => SetDisplayAlert(false)} />
     </AlertContent>
   );
 }
-
+const CloseIconStyle = styled(CloseIcon)`
+  color: ${({ status }) => (status ? "#669d73ff" : "#c21d2bff")};
+  cursor: pointer;
+`;
 const AlertContent = styled.div`
   padding: 4px;
-  background-color: ${(type) => (type === "success" ? "#d4edda" : " #f8d7da")};
+  background-color: ${({ status }) => (status ? "#d4edda" : "#f8d7da")};
   border-radius: 4px;
-  margin-top: 12px;
-  color: white;
   text-align: center;
-  outline: 2px solid rgba(176, 81, 97, 0.9);
+  outline: 2px solid ${({ status }) => (status ? "#d4edda" : "#f8d7da")};
+  color: ${({ status }) => (status ? "#669d73ff" : "#c21d2bff")};
   padding-inline: 32px 16px;
   display: flex;
   gap: 34px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  max-width: 400px;
+  position: absolute;
+  top: 100px;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const TextAlert = styled.p`
   margin: 0;
-  color: rgba(176, 81, 97, 0.9);
+
   font-size: 14px;
   padding-left: 24px;
   font-weight: 600;
-`;
-
-const Close = styled.span`
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  color: black;
-  outline: 1px solid #b6b3b3ff;
-  padding: 4px 8px;
-  border-radius: 50%;
-  background-color: #dedede;
-  &:hover {
-    background-color: #c4c4c4;
-  }
 `;

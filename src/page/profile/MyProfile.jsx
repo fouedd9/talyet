@@ -1,4 +1,13 @@
-import { Avatar, Button, Dialog, Flex, Text } from "@fluentui/react-northstar";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  EditIcon,
+  Flex,
+  Input,
+  Loader,
+  Text,
+} from "@fluentui/react-northstar";
 import styled from "styled-components";
 import Logout from "../../auth/Logout";
 import {
@@ -11,15 +20,20 @@ import {
   Person32Color,
   PersonHeart32Color,
   SlideTextSparkle32Color,
+  CheckmarkCircle32Color,
+  DismissCircle32Color,
 } from "@fluentui/react-icons";
 import { useAuthStore } from "../../store/useAuthStore";
-import { useQuery } from "@tanstack/react-query";
-import { getMyProfileData } from "./api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { _api_Validate_new_Phone, getMyProfileData } from "./api";
 import { _getRole } from "./components/Badge.jsx";
+import { EditProfile } from "./EditProfile.jsx";
+import { useEffect, useState } from "react";
+import Alert from "../../components/Alert.jsx";
 
 export const MyProfile = () => {
   const { user } = useAuthStore();
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["profile_data", user.id],
     queryFn: () => getMyProfileData(user.id),
   });
@@ -44,20 +58,67 @@ export const MyProfile = () => {
       content="Non renseigné"
     />
   );
+
+  /**
+   * USE STATE for Edit profil
+   */
+
+  const [phoneNum, SetPhone] = useState(phone ?? null);
+  const [displayAlert, SetDisplayAlert] = useState(false);
+  const [status, setStatus] = useState({
+    type: "",
+    message: "",
+  });
+  const [showInput, setShowInput] = useState(false);
+
+  /**
+   * For default Value Input
+   */
+  useEffect(() => {
+    if (phone) {
+      SetPhone(phone);
+    }
+  }, [phone]);
+
+  /**
+   * MUTATION FUNCTION
+   */
+
+  const { mutate } = useMutation({
+    mutationFn: (newphone) => _api_Validate_new_Phone(newphone, user.id),
+  });
+  const validateEditPhone = (newPhone) => {
+    return mutate(newPhone, {
+      onSuccess: (data) => {
+        console.log({ datae: data });
+        setStatus({ type: data.success, message: data.message });
+        setShowInput(false);
+
+        SetDisplayAlert(true);
+        refetch();
+        return;
+      },
+    });
+  };
+
   return (
     <Profile fill>
       <ProfileContainer column>
+        {displayAlert && (
+          <Alert
+            SetDisplayAlert={SetDisplayAlert}
+            content={status.message}
+            status={status.type}
+            dismissible={true}
+          />
+        )}
         <DashboardHeaderCard space="between" vAlign="center">
           <Flex column gap="gap.small">
             <ProfileTitle content="Mon profil" />
             <DescriptionText content="Gérez vos informations personnelles" />
           </Flex>
           <Flex gap="gap.large">
-            <Dialog
-              header={"ejejhe"}
-              trigger={<Button content={"Modifier mon profil"} />}
-            />
-
+            <EditProfile />
             <Logout />
           </Flex>
         </DashboardHeaderCard>
@@ -81,29 +142,69 @@ export const MyProfile = () => {
         </DashboardContent>
         {/* contact section */}
         <Footer gap="gap.large">
-          <ContactCard column fill>
-            <ContactHeader vAlign="center" gap="gap.small">
-              <ContactCard32Color />
-              <ContactTitle content="Contact" />
-            </ContactHeader>
-            <Divider />
-            <Flex column vAlign="center" gap="gap.large">
-              <Flex vAlign="center" gap="gap.large">
-                <Mail32Color />
-                <Flex column>
-                  <EmailLabel content="Email" />
-                  <EmailText content={email ?? NotFound} />
-                </Flex>
+          {/* contact  */}
+          <ContactCard column gap="gap.large">
+            <Flex column fill>
+              <Flex space="between">
+                <ContactHeader vAlign="center" gap="gap.small">
+                  <ContactCard32Color />
+                  <ContactTitle content="Contact" />
+                </ContactHeader>
+                <Button
+                  flat
+                  iconOnly
+                  icon={<EditIcon onClick={() => setShowInput(true)} outline />}
+                />
               </Flex>
-              <Flex vAlign="center" gap="gap.large">
-                <Phone32Color />
+              <Divider />
+              <Flex column vAlign="center" gap="gap.large">
+                <Flex vAlign="center" gap="gap.large">
+                  <Mail32Color />
+                  <Flex column>
+                    <EmailLabel content="Email" />
+                    <EmailText content={email ?? NotFound} />
+                  </Flex>
+                </Flex>
+                <Flex vAlign="center" gap="gap.large">
+                  <Phone32Color />
 
-                <Flex column>
-                  <EmailLabel content="Téléphon" />
-                  <EmailText content={phone ?? NotFound} />
+                  <Flex column>
+                    <EmailLabel content="Téléphon" />
+                    {!showInput ? (
+                      <EmailText content={phone ?? NotFound} />
+                    ) : (
+                      <Input
+                        onChange={(e) => SetPhone(e.target.value)}
+                        defaultValue={phoneNum}
+                        type="number"
+                        // placeholder={"+33 . . . ."}
+                      />
+                    )}
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
+            {/* buttons  */}
+            {showInput && (
+              <Flex gap="gap.small" hAlign="center">
+                <Button
+                  onClick={() => setShowInput(false)}
+                  flat
+                  iconPosition="after"
+                  content={"Annuler"}
+                  icon={<DismissCircle32Color />}
+                />
+                <Button
+                  onClick={() => validateEditPhone(phoneNum)}
+                  primary
+                  flat
+                  disabled={phoneNum === phone}
+                  iconPosition="after"
+                  content={"Valider"}
+                  icon={<CheckmarkCircle32Color />}
+                />
+              </Flex>
+            )}
           </ContactCard>
           {/* location  */}
           <ContactCard column fill>
@@ -125,7 +226,18 @@ export const MyProfile = () => {
 
                 <Flex column>
                   <EmailLabel content="Pays" />
-                  <EmailText content={NotFound ?? `${city}, ${country}`} />
+                  <Flex gap="gap.smaller">
+                    {city ? (
+                      <EmailText content={`${city}`} />
+                    ) : (
+                      <EmailText content={NotFound} />
+                    )}
+                    {country ? (
+                      <EmailText content={`${country}`} />
+                    ) : (
+                      <EmailText content={NotFound} />
+                    )}
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
@@ -265,11 +377,11 @@ const Footer = styled(Flex)``;
 const ContactCard = styled(Flex)`
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 40px;
+  padding: 40px 40px 40px 40px;
   backdrop-filter: blur(10px);
   max-width: 1020px;
   width: 380px;
-  margin-bottom: 24px;
+  margin-bottom: 4px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
 `;

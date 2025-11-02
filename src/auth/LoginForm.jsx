@@ -101,7 +101,6 @@ const LoginForm = ({ setSwitchUi }) => {
           <EmailBlock>
             <Label>Email</Label>
             <Input
-              label="larme"
               // type="email"
               {...register("email", { required: true })}
               placeholder="Entrez votre email"
