@@ -7,6 +7,7 @@ import {
   Input,
   Loader,
   Text,
+  TextArea,
 } from "@fluentui/react-northstar";
 import styled from "styled-components";
 import Logout from "../../auth/Logout";
@@ -25,7 +26,11 @@ import {
 } from "@fluentui/react-icons";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { _api_Validate_new_Phone, getMyProfileData } from "./api";
+import {
+  _api_Validate_new_bio,
+  _api_Validate_new_Phone,
+  getMyProfileData,
+} from "./api";
 import { _getRole } from "./components/Badge.jsx";
 import { EditProfile } from "./EditProfile.jsx";
 import { useEffect, useState } from "react";
@@ -70,7 +75,8 @@ export const MyProfile = () => {
     message: "",
   });
   const [showInput, setShowInput] = useState(false);
-
+  const [showEditBio, setShowEditBio] = useState(false);
+  const [NewBio, SetNewBio] = useState(bio);
   /**
    * For default Value Input
    */
@@ -81,14 +87,32 @@ export const MyProfile = () => {
   }, [phone]);
 
   /**
+   * MUTATION FUNCTION EDIT Phone number
+   */
+  const { mutate: mutateNewPhone } = useMutation({
+    mutationFn: (newphone) => _api_Validate_new_Phone(newphone, user.id),
+  });
+  /**
    * MUTATION FUNCTION
    */
 
-  const { mutate } = useMutation({
-    mutationFn: (newphone) => _api_Validate_new_Phone(newphone, user.id),
+  /**
+   * MUTATION NEW BIO
+   */
+  const { mutate: mutateNewBio } = useMutation({
+    mutationFn: () => _api_Validate_new_bio(NewBio, user.id),
+    onSuccess: () => {
+      setShowEditBio(false);
+      refetch();
+      return;
+    },
   });
+  /**
+   * MUTATION NEW BIO
+   */
+
   const validateEditPhone = (newPhone) => {
-    return mutate(newPhone, {
+    return mutateNewPhone(newPhone, {
       onSuccess: (data) => {
         console.log({ datae: data });
         setStatus({ type: data.success, message: data.message });
@@ -99,6 +123,10 @@ export const MyProfile = () => {
         return;
       },
     });
+  };
+
+  const ValidateNewBio = () => {
+    return mutateNewBio();
   };
 
   return (
@@ -132,12 +160,48 @@ export const MyProfile = () => {
                 <JobTitle content={job_title ?? NotFound} />
               </Flex>
             </Flex>
-            <Text content={_getRole(role)} />
+            <Flex vAlign="center" gap="gap.small">
+              <Text content={_getRole(role)} />
+            </Flex>
           </Flex>
           <Divider />
           <Flex gap="gap.small" column>
-            <BioTitle content={"A propos"} />
+            <Flex space="between" fill>
+              <BioTitle content={"A propos"} />
+              <Button
+                flat
+                iconOnly
+                icon={<EditIcon onClick={() => setShowEditBio(true)} outline />}
+              />
+            </Flex>
             <BioDescription content={bio ?? NotFound} />
+            {showEditBio && (
+              <Flex fill column>
+                <TextAreaStyle
+                  defaultValue={bio}
+                  onChange={(e) => SetNewBio(e.target.value)}
+                  fluid
+                  maxLength={150}
+                  placeholder="Type here your bio in 150 caracteres"
+                />
+                <Flex hAlign="end">
+                  <Button
+                    onClick={() => setShowEditBio(false)}
+                    flat
+                    icon={<DismissCircle32Color />}
+                    content={"Annuler"}
+                  />
+                  <Button
+                    disabled={bio === NewBio}
+                    onClick={() => ValidateNewBio()}
+                    flat
+                    iconPosition="after"
+                    icon={<CheckmarkCircle32Color />}
+                    content={"Valider"}
+                  />
+                </Flex>
+              </Flex>
+            )}
           </Flex>
         </DashboardContent>
         {/* contact section */}
@@ -273,6 +337,10 @@ export const MyProfile = () => {
   );
 };
 
+const TextAreaStyle = styled(TextArea)`
+  height: 100px;
+`;
+
 const ProfileContainer = styled(Flex)`
   max-width: 1440px;
   margin: 0 auto;
@@ -354,8 +422,8 @@ const BioTitle = styled(Text)`
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
-  margin-bottom: 20px;
-  margin: 0;
+  /* margin-bottom: 20px; */
+  /* margin: 0; */
 `;
 
 const BioDescription = styled(Text)`
