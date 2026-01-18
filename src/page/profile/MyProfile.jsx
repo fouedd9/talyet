@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   Dialog,
+  Dropdown,
   EditIcon,
   Flex,
   Input,
@@ -35,6 +36,7 @@ import { _getRole } from "./components/Badge.jsx";
 import { EditProfile } from "./EditProfile.jsx";
 import { useEffect, useState } from "react";
 import Alert from "../../components/Alert.jsx";
+import { EditRole } from "./components/EditRole.jsx";
 
 export const MyProfile = () => {
   const { user } = useAuthStore();
@@ -70,13 +72,11 @@ export const MyProfile = () => {
 
   const [phoneNum, SetPhone] = useState(phone ?? null);
   const [displayAlert, SetDisplayAlert] = useState(false);
-  const [status, setStatus] = useState({
-    type: "",
-    message: "",
-  });
+  const [status, setStatus] = useState({ type: "", message: "" });
   const [showInput, setShowInput] = useState(false);
   const [showEditBio, setShowEditBio] = useState(false);
   const [NewBio, SetNewBio] = useState(bio);
+  const [showEditRole, setShowEditRole] = useState(false);
   /**
    * For default Value Input
    */
@@ -160,8 +160,19 @@ export const MyProfile = () => {
                 <JobTitle content={job_title ?? NotFound} />
               </Flex>
             </Flex>
-            <Flex vAlign="center" gap="gap.small">
-              <Text content={_getRole(role)} />
+            <Flex gap="gap.small">
+              {showEditRole ? (
+                <EditRole userId={user.id} />
+              ) : (
+                <Text content={_getRole(role)} />
+              )}
+              <Button
+                onClick={() => setShowEditRole(!showEditRole)}
+                size="small"
+                flat
+                iconOnly
+                icon={<EditIcon size="small" outline />}
+              />
             </Flex>
           </Flex>
           <Divider />
