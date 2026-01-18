@@ -6,7 +6,7 @@ export const getMyProfileData = async (id) => {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  console.log(res);
+
   return res.json();
 };
 
@@ -34,4 +34,24 @@ export const _api_Validate_new_bio = async (newBio, userId) => {
     // cache: "no-store",
   });
   return res.json();
+};
+
+export const _api_getAllRoles = async () => {
+  const res = await authFetch(`${apiUrl}/api/me/roles`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  return res.json();
+};
+export const _api_changeMyRole = async (newRole, userId) => {
+  const request = await authFetch(`${apiUrl}/api/me/roles/change_user_role`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      newRole: newRole.id,
+      userId: userId,
+    }),
+  });
+  request.json();
+  return console.log(newRole, userId);
 };
