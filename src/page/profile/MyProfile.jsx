@@ -46,7 +46,8 @@ export const MyProfile = () => {
   });
   // const userConnected = data.userConnected;
   const {
-    role,
+    // role,
+    role_id,
     id,
     country,
     city,
@@ -162,9 +163,13 @@ export const MyProfile = () => {
             </Flex>
             <Flex gap="gap.small">
               {showEditRole ? (
-                <EditRole userId={user.id} />
+                <EditRole
+                  userId={user.id}
+                  refetch={refetch}
+                  setShowEditRole={setShowEditRole}
+                />
               ) : (
-                <Text content={_getRole(role)} />
+                <Text content={_getRole(role_id)} />
               )}
               <Button
                 onClick={() => setShowEditRole(!showEditRole)}
@@ -360,9 +365,9 @@ const ProfileContainer = styled(Flex)`
 
 const Profile = styled(Flex)`
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
