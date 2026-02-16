@@ -12,25 +12,31 @@ const Badge = styled(Text)`
 
 export const _getRole = (role) => {
   switch (role) {
-    case "rh":
+    case 4:
       return (
         <Badge $bgcolor={"#C3C4f8"} $color="#1417c5ff">
           Ressource humaine
         </Badge>
       );
-    case "manager":
+    case 1:
+      return (
+        <Badge $bgcolor={"rgb(156, 202, 20)"} $color="#0c411fff">
+          admin
+        </Badge>
+      );
+    case 3:
       return (
         <Badge $bgcolor={"#99d6afff"} $color="#0c411fff">
           Manager
         </Badge>
       );
-    case "employee":
+    case 2:
       return (
         <Badge $bgcolor={"#7ed9deff"} $color="#083e41ff">
           Collaborateur
         </Badge>
       );
-    case "admin":
+    case 6:
       return (
         <Badge $bgcolor={"#bb4d70ff"} $color="#fafafaff">
           Admin

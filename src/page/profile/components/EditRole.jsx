@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { _api_changeMyRole, _api_getAllRoles } from "../api";
 import { useState } from "react";
 
-export const EditRole = ({ userId }) => {
+export const EditRole = ({ userId, refetch, setShowEditRole }) => {
   const [role, setRole] = useState(null);
 
   const { data } = useQuery({
@@ -17,6 +17,11 @@ export const EditRole = ({ userId }) => {
 
   const { mutate } = useMutation({
     mutationFn: (roleId) => _api_changeMyRole(roleId, userId),
+    onSuccess: () => {
+      refetch();
+      setShowEditRole(false);
+      return;
+    },
   });
 
   const items = data?.map((el) => ({
@@ -41,7 +46,11 @@ export const EditRole = ({ userId }) => {
         items={items}
       />
       <Flex hAlign="end">
-        <Button iconOnly icon={<DismissCircle32Color />} />
+        <Button
+          onClick={() => setShowEditRole(false)}
+          iconOnly
+          icon={<DismissCircle32Color />}
+        />
         <Button
           onClick={() => validateNewRole(role)}
           iconOnly
